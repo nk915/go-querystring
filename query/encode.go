@@ -7,9 +7,9 @@
 // As a simple example:
 //
 // 	type Options struct {
-// 		Query   string `url:"q"`
-// 		ShowAll bool   `url:"all"`
-// 		Page    int    `url:"page"`
+// 		Query   string `json:"q"`
+// 		ShowAll bool   `json:"all"`
+// 		Page    int    `json:"page"`
 // 	}
 //
 // 	opt := Options{ "foo", true, 2 }
@@ -60,18 +60,18 @@ type Encoder interface {
 // options.  For example:
 //
 // 	// Field is ignored by this package.
-// 	Field int `url:"-"`
+// 	Field int `json:"-"`
 //
 // 	// Field appears as URL parameter "myName".
-// 	Field int `url:"myName"`
+// 	Field int `json:"myName"`
 //
 // 	// Field appears as URL parameter "myName" and the field is omitted if
 // 	// its value is empty
-// 	Field int `url:"myName,omitempty"`
+// 	Field int `json:"myName,omitempty"`
 //
 // 	// Field appears as URL parameter "Field" (the default), but the field
 // 	// is skipped if empty.  Note the leading comma.
-// 	Field int `url:",omitempty"`
+// 	Field int `json:",omitempty"`
 //
 // For encoding individual field values, the following type-dependent rules
 // apply:
@@ -105,7 +105,7 @@ type Encoder interface {
 //
 // 	// Encode a slice of bools as ints ("1" for true, "0" for false),
 // 	// separated by exclamation points "!".
-// 	Field []bool `url:",int" del:"!"`
+// 	Field []bool `json:",int" del:"!"`
 //
 // Anonymous struct fields are usually encoded as if their inner exported
 // fields were fields in the outer struct, subject to the standard Go
@@ -159,7 +159,7 @@ func reflectValue(values url.Values, val reflect.Value, scope string) error {
 		}
 
 		sv := val.Field(i)
-		tag := sf.Tag.Get("url")
+		tag := sf.Tag.Get("json")
 		if tag == "-" {
 			continue
 		}

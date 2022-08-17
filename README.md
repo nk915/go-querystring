@@ -21,9 +21,9 @@ The query package exports a single `Values()` function.  A simple example:
 
 ```go
 type Options struct {
-  Query   string `url:"q"`
-  ShowAll bool   `url:"all"`
-  Page    int    `url:"page"`
+  Query   string `json:"q"`
+  ShowAll bool   `json:"all"`
+  Page    int    `json:"page"`
 }
 
 opt := Options{ "foo", true, 2 }
