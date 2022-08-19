@@ -7,9 +7,9 @@
 // As a simple example:
 //
 // 	type Options struct {
-// 		Query   string `json:"q"`
-// 		ShowAll bool   `json:"all"`
-// 		Page    int    `json:"page"`
+// 		Query   string `url:"q"`
+// 		ShowAll bool   `url:"all"`
+// 		Page    int    `url:"page"`
 // 	}
 //
 // 	opt := Options{ "foo", true, 2 }
@@ -60,18 +60,18 @@ type Encoder interface {
 // options.  For example:
 //
 // 	// Field is ignored by this package.
-// 	Field int `json:"-"`
+// 	Field int `url:"-"`
 //
 // 	// Field appears as URL parameter "myName".
-// 	Field int `json:"myName"`
+// 	Field int `url:"myName"`
 //
 // 	// Field appears as URL parameter "myName" and the field is omitted if
 // 	// its value is empty
-// 	Field int `json:"myName,omitempty"`
+// 	Field int `url:"myName,omitempty"`
 //
 // 	// Field appears as URL parameter "Field" (the default), but the field
 // 	// is skipped if empty.  Note the leading comma.
-// 	Field int `json:",omitempty"`
+// 	Field int `url:",omitempty"`
 //
 // For encoding individual field values, the following type-dependent rules
 // apply:
@@ -105,7 +105,7 @@ type Encoder interface {
 //
 // 	// Encode a slice of bools as ints ("1" for true, "0" for false),
 // 	// separated by exclamation points "!".
-// 	Field []bool `json:",int" del:"!"`
+// 	Field []bool `url:",int" del:"!"`
 //
 // Anonymous struct fields are usually encoded as if their inner exported
 // fields were fields in the outer struct, subject to the standard Go
@@ -159,7 +159,7 @@ func reflectValue(values url.Values, val reflect.Value, scope string) error {
 		}
 
 		sv := val.Field(i)
-		tag := sf.Tag.Get("json")
+		tag := sf.Tag.Get("url")
 		if tag == "-" {
 			continue
 		}
@@ -244,6 +244,8 @@ func reflectValue(values url.Values, val reflect.Value, scope string) error {
 					k := name
 					if opts.Contains("numbered") {
 						k = fmt.Sprintf("%s%d", name, i)
+					} else if opts.Contains("spotnumbered") {
+						k = fmt.Sprintf("%s.%d", name, i+1)
 					}
 					values.Add(k, valueString(sv.Index(i), opts, sf))
 				}
